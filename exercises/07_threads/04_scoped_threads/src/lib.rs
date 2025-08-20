@@ -2,8 +2,27 @@
 //  and compute the sum of each half in a separate thread.
 //  Don't perform any heap allocation. Don't leak any memory.
 
+use std::os::windows::thread;
+
 pub fn sum(v: Vec<i32>) -> i32 {
-    todo!()
+
+    let mut s = 0;
+    let mut s2 = 0;
+
+    std::thread::scope(|sc| {
+        sc.spawn(|| {
+            for i in 0..v.len()/2 {
+                s = s + v[i];            }
+        });
+
+        sc.spawn(|| {
+            for i in v.len()/2..v.len() {
+                s2 = s2 + v[i];
+            }
+        });
+    });
+
+    (s+s2).try_into().unwrap()
 }
 
 #[cfg(test)]
